@@ -1,22 +1,21 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('users')
-export class UsersEntity {
+@Entity()
+export class User {
+  @ApiProperty({ description: '用户ID', example: 1 })
   @PrimaryGeneratedColumn()
-  id: number; // 标记为主列，值自动生成
+  id: number;
 
-  @Column({ length: 20 })
+  @ApiProperty({ description: '用户名', example: '张三' })
+  @Column()
   name: string;
 
-  @Column('tinyint')
+  @ApiProperty({ description: '年龄', example: 16 })
+  @Column()
   age: number;
 
-  @Column('tinyint')
+  @ApiProperty({ description: '性别，男1，女0', example: 1 })
+  @Column()
   gender: number;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  create_time: Date;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  update_time: Date;
 }

@@ -9,6 +9,11 @@ import { AppService } from './app.service';
 import { UserModule } from './users/users.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { User } from './users/users.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './interceptor/logging.interceptor';
+import { TransformInterceptor } from './interceptor/transform.interceptor';
 
 @Module({
   imports: [
@@ -20,14 +25,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'root',
       password: 'cqx20010118',
       database: 'test',
-      entities: ['dist/**/*.entity{.ts,.js}'],
+      entities: [User],
       synchronize: true,
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
+  constructor(private dataSource: DataSource) {}
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
