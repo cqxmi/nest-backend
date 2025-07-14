@@ -6,18 +6,21 @@ import {
 } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './users/users.module';
+import { UserModule } from './modules/users/module';
+import { TextModule } from './modules/texts/module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from './users/users.entity';
+import { User } from './modules/users/entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
+import { Text } from './modules/texts/entity';
 
 @Module({
   imports: [
     UserModule,
+    TextModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -25,7 +28,7 @@ import { TransformInterceptor } from './interceptor/transform.interceptor';
       username: 'root',
       password: 'cqx20010118',
       database: 'test',
-      entities: [User],
+      entities: [User, Text],
       synchronize: true,
     }),
   ],

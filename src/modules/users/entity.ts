@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Text } from '../texts/entity';
 
 @Entity()
 export class User {
@@ -18,4 +19,7 @@ export class User {
   @ApiProperty({ description: '性别，男1，女0', example: 1 })
   @Column()
   gender: number;
+
+  @OneToMany(() => Text, (text) => text.user)
+  texts: Text[];
 }
