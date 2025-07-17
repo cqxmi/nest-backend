@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/users/module';
 import { TextModule } from './modules/texts/module';
+import { AuthModule } from './modules/auth/module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -21,6 +22,7 @@ import { Text } from './modules/texts/entity';
   imports: [
     UserModule,
     TextModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

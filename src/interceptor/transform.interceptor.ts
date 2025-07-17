@@ -24,7 +24,6 @@ export class TransformInterceptor<T>
     if (request.url === '/' && request.method === 'GET') {
       return next.handle();
     }
-
     return next.handle().pipe(
       map((data: T) => ({
         code: 0,
@@ -36,11 +35,17 @@ export class TransformInterceptor<T>
         console.error('Request failed:', error);
 
         // 返回统一的错误格式
-        return throwError(() => ({
-          code: error.getStatus() || 500,
-          success: false,
-          message: error.message || 'Request failed',
-        }));
+        return throwError(
+          () =>
+            new HttpException(
+              {
+                code: error.getStatus() || 500,
+                success: false,
+                message: error.message || 'Request failed',
+              },
+              error.getStatus() || 500,
+            ),
+        );
       }),
     );
   }

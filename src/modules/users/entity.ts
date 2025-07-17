@@ -10,15 +10,11 @@ export class User {
 
   @ApiProperty({ description: '用户名', example: '张三' })
   @Column()
-  name: string;
+  username: string;
 
-  @ApiProperty({ description: '年龄', example: 16 })
+  @ApiProperty({ description: '密码', example: '123456' })
   @Column()
-  age: number;
-
-  @ApiProperty({ description: '性别，男1，女0', example: 1 })
-  @Column()
-  gender: number;
+  password: string;
 
   @OneToMany(() => Text, (text) => text.user)
   texts: Text[];
