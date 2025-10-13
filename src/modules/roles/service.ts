@@ -9,4 +9,8 @@ export class RolesService {
     @InjectRepository(Role)
     private rolesRepository: Repository<Role>,
   ) {}
+
+  findAll(): Promise<[Role[], number]> {
+    return this.rolesRepository.findAndCount();
+  }
 }

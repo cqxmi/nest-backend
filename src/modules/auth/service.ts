@@ -1,10 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/service';
 import { JwtService } from '@nestjs/jwt';
+import { Authority } from './entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(Authority)
+    private authoritysRepository: Repository<Authority>,
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
@@ -18,5 +23,8 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+  async findAll(): Promise<Authority[]> {
+    return await this.authoritysRepository.find();
   }
 }

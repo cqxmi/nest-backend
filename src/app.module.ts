@@ -14,11 +14,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './modules/users/entity';
 import { Role } from './modules/roles/entity';
-import { Authority } from './modules/authoritys/entity';
+import { Authority } from './modules/auth/entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
-import { AuthorityModule } from './modules/authoritys/module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/guard';
 
@@ -27,7 +26,6 @@ import { AuthGuard } from './modules/auth/guard';
     UserModule,
     AuthModule,
     RoleModule,
-    AuthorityModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
