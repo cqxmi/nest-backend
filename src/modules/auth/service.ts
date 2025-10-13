@@ -1,47 +1,22 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../users/entity';
-import { CreateUserDto } from '../users/dto/create-user.dto';
-import { comparePassword, hashPassword } from '../../utils/bcrypt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from '../users/service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private authRepository: Repository<User>,
+    private usersService: UsersService,
+    private jwtService: JwtService,
   ) {}
 
-  // 注册
-  async register(registerArg: CreateUserDto): Promise<User> {
-    // 先查重
-    const existingUser = await this.authRepository.findOne({
-      where: { username: registerArg.username }, // 假设 DTO 中有 username 字段
-    });
-    if (existingUser) {
-      throw new ConflictException('用户名已存在'); // 返回 409 冲突状态码
+  async signIn(phone: string, pass: string): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOne({ phone });
+    if (user?.password !== pass) {
+      throw new UnauthorizedException();
     }
-    registerArg.password = await hashPassword(registerArg.password);
-    return this.authRepository.save(registerArg);
-  }
-
-  // 登录
-  async login(loginArg: CreateUserDto): Promise<User> {
-    // 先判断有没有
-    const existingUser = await this.authRepository.findOne({
-      where: { username: loginArg.username }, // 假设 DTO 中有 username 字段
-    });
-    if (!existingUser) {
-      throw new NotFoundException('该用户不存在');
-    }
-    if (await comparePassword(loginArg.password, existingUser.password)) {
-      return existingUser;
-    } else {
-      throw new NotFoundException('密码错误');
-    }
+    const payload = { sub: user.id, phone: user.phone };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }

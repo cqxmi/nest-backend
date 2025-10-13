@@ -7,22 +7,27 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/users/module';
-import { TextModule } from './modules/texts/module';
 import { AuthModule } from './modules/auth/module';
+import { RoleModule } from './modules/roles/module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './modules/users/entity';
+import { Role } from './modules/roles/entity';
+import { Authority } from './modules/authoritys/entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
-import { Text } from './modules/texts/entity';
+import { AuthorityModule } from './modules/authoritys/module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './modules/auth/guard';
 
 @Module({
   imports: [
     UserModule,
-    TextModule,
     AuthModule,
+    RoleModule,
+    AuthorityModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -30,7 +35,7 @@ import { Text } from './modules/texts/entity';
       username: 'root',
       password: 'cqx20010118',
       database: 'test',
-      entities: [User, Text],
+      entities: [User, Role, Authority],
       synchronize: true,
     }),
   ],
@@ -44,6 +49,10 @@ import { Text } from './modules/texts/entity';
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })

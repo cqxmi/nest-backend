@@ -1,6 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Text } from '../texts/entity';
+import { Role } from '../roles/entity';
 
 @Entity()
 export class User {
@@ -8,14 +14,25 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: '用户名', example: '张三' })
+  @ApiProperty({ description: '用户昵称', example: '张三' })
   @Column()
-  username: string;
+  name: string;
+
+  @ApiProperty({ description: '电话号码', example: '17687673304' })
+  @Column()
+  phone: string;
 
   @ApiProperty({ description: '密码', example: '123456' })
   @Column()
   password: string;
 
-  @OneToMany(() => Text, (text) => text.user)
-  texts: Text[];
+  @ApiProperty({ description: '角色Id', example: 1 })
+  @Column()
+  roleId: number;
+
+  // 多对一关系：多个用户对应一个角色
+  @ApiProperty({ description: '用户角色', type: () => Role })
+  @ManyToOne(() => Role, (role) => role.users)
+  @JoinColumn({ name: 'roleId' }) // 指定外键列
+  role: Role;
 }
