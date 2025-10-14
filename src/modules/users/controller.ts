@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { jwtPayload } from './dto/create-user.dto';
+import { jwtPayload } from './user.dto';
 
 @ApiTags('用户') // Swagger 分组名称
 @Controller('users')
@@ -23,8 +23,10 @@ export class UsersController {
     const user: jwtPayload = request['user'] as jwtPayload;
     const res = await this.userService.findOne({ id: user.id }, ['role']);
     return {
-      role: res?.role.name,
-      username: res?.name,
+      data: {
+        role: res?.role.name,
+        username: res?.name,
+      },
     };
   }
 
@@ -34,7 +36,8 @@ export class UsersController {
   async getPermissionListByUser(@Req() request: Request) {
     const user: jwtPayload = request['user'] as jwtPayload;
     const res = await this.userService.findOne({ id: user.id }, ['role']);
-    console.log(res);
-    return res?.role.authoritys;
+    return {
+      data: res?.role.authoritys,
+    };
   }
 }

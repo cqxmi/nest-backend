@@ -1,11 +1,9 @@
-import { Authority } from 'src/modules/auth/entity';
+import { Authority, AuthorityNode } from 'src/modules/auth/entity';
 
-export const buildTree = (
-  data: Array<Authority>,
-): Array<Authority & { children: Array<Authority & { children: any }> }> => {
+export const buildTree = (data: Array<Authority>): AuthorityNode[] => {
   // ✅ 使用索引签名，明确 map 的类型
   const map: { [key: number]: Authority & { children: Array<any> } } = {};
-  const roots: Array<Authority & { children: Array<any> }> = [];
+  const roots: AuthorityNode[] = [];
 
   // 第一步：初始化所有节点，并添加 children 数组
   data.forEach((item: Authority) => {
@@ -24,4 +22,21 @@ export const buildTree = (
   });
 
   return roots;
+};
+
+export const idToTree = (
+  arr: number[],
+  authoritys: Authority[],
+): AuthorityNode[] => {
+  const newAuths: Authority[] = authoritys.filter((ele) =>
+    arr.includes(ele.id),
+  );
+  return buildTree(newAuths);
+};
+
+export const traverseTree = (arr: AuthorityNode[]): string[] => {
+  return arr.flatMap((node) => [
+    node.permissionName,
+    ...(node.children ? traverseTree(node.children) : []),
+  ]);
 };

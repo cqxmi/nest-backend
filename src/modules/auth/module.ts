@@ -19,5 +19,6 @@ import { Authority } from './entity';
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [AuthService], // ✅ 必须导出
 })
 export class AuthModule {}

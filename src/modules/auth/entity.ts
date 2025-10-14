@@ -19,3 +19,7 @@ export class Authority {
   @Column()
   permissionName: string;
 }
+
+export class AuthorityNode extends Authority {
+  children?: AuthorityNode[];
+}

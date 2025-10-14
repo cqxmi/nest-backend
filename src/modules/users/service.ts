@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity';
 import { FindOneOptions, Repository } from 'typeorm';
-import { jwtPayload } from './dto/create-user.dto';
+import { jwtPayload } from './user.dto';
 
 @Injectable()
 export class UsersService {

@@ -28,7 +28,7 @@ export class TransformInterceptor<T>
       map((data: T) => ({
         code: 0,
         success: true,
-        data,
+        ...data,
       })),
       catchError((error: HttpException) => {
         // 这里可以记录错误日志
