@@ -26,13 +26,13 @@ export class AuthController {
     type: [ResponseBooleanDto],
   })
   @HttpCode(HttpStatus.OK)
-  signIn(@Body() signInDto: CreateUserDto) {
+  async signIn(@Body() signInDto: CreateUserDto) {
     return {
-      data: this.authService.signIn(signInDto.phone, signInDto.password),
+      data: await this.authService.signIn(signInDto.phone, signInDto.password),
     };
   }
 
-  @ApiOperation({ summary: '获取所有权限', description: '获取所有权限' })
+  @ApiOperation({ summary: '获取所有的权限', description: '获取所有权限' })
   @HttpCode(HttpStatus.OK)
   @Get('getPermissions')
   async getPermissions(): Promise<any> {

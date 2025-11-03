@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
 
 @Injectable()
 export class RolesService {
@@ -24,5 +24,19 @@ export class RolesService {
 
   async delOne(id: number) {
     await this.rolesRepository.delete(id);
+  }
+
+  async updateOne(id: number, updateData: any) {
+    const result = await this.rolesRepository.update(
+      id,
+      updateData as DeepPartial<Role>,
+    );
+
+    // 检查是否成功更新
+    if (result.affected === 0) {
+      return false;
+    }
+
+    return true;
   }
 }

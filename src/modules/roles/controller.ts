@@ -11,7 +11,7 @@ import { RolesService } from './service';
 import { AuthService } from '../auth/service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateRoleDto, RoleListResponseDto } from './role.dto';
-import { idToTree, traverseTree } from 'src/utils/funcs';
+import { idToTree, traverseTree, traverseTreeId } from 'src/utils/funcs';
 import { AuthorityNode } from 'src/modules/auth/entity';
 import { ResponseBooleanDto } from 'src/app.dto';
 
@@ -41,6 +41,7 @@ export class RolesController {
             id: item.id,
             name: item.name,
             authoritysStr: traverseTree(item.authoritys as AuthorityNode[]),
+            authoritys: traverseTreeId(item.authoritys as AuthorityNode[]),
           };
         }),
         total,
@@ -91,14 +92,14 @@ export class RolesController {
   @ApiOperation({ summary: '编辑角色', description: '编辑角色' })
   @HttpCode(HttpStatus.OK)
   async editRole(@Body() createRoleDto: CreateRoleDto) {
-    const { name, authoritys } = createRoleDto;
+    const { name, authoritys, id } = createRoleDto;
 
     // 1. 查重：角色名已存在
-    const existingRole = await this.roleService.findOne({ name });
-    if (existingRole) {
+    const existingRole = await this.roleService.findOne(id);
+    if (!existingRole) {
       return {
         code: 1,
-        message: '角色已存在',
+        message: '角色不存在',
       };
     }
 
@@ -114,7 +115,7 @@ export class RolesController {
       authoritys: JSON.stringify(treeStructure), // 序列化为 JSON 字符串存入数据库
     };
 
-    await this.roleService.addOne(roleToSave);
+    await this.roleService.updateOne(id as number, roleToSave);
 
     return {
       data: true,

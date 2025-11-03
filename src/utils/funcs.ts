@@ -40,3 +40,10 @@ export const traverseTree = (arr: AuthorityNode[]): string[] => {
     ...(node.children ? traverseTree(node.children) : []),
   ]);
 };
+
+export const traverseTreeId = (arr: AuthorityNode[]): number[] => {
+  return arr.flatMap((node) => [
+    node.id,
+    ...(node.children ? traverseTreeId(node.children) : []),
+  ]);
+};

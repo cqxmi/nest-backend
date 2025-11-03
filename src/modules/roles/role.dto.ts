@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ResponseDto } from 'src/app.dto';
 
 export class CreateRoleDto {
+  @ApiProperty({ description: '角色id', example: '1' })
+  id?: number;
+
   @ApiProperty({ description: '角色名', example: '超级管理员' })
   name: string;
 
