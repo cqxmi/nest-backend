@@ -17,3 +17,8 @@ export class accountAddDto {
   @IsNotEmpty({ message: 'cookie不能为空' })
   cookie: string;
 }
+
+export class DelAccountDto {
+  @IsNotEmpty({ message: 'id不能为空' })
+  id: number;
+}

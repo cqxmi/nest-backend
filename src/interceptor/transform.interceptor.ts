@@ -32,7 +32,7 @@ export class TransformInterceptor<T>
       })),
       catchError((error: HttpException) => {
         // 这里可以记录错误日志
-        // console.error('Request failed:', error);
+        console.error('Request failed:', error);
         const res = error.getResponse();
         let message = 'Request failed';
 
