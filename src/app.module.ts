@@ -8,32 +8,31 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/users/module';
 import { AuthModule } from './modules/auth/module';
-import { RoleModule } from './modules/roles/module';
+import { AccountModule } from './modules/account/module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './modules/users/entity';
-import { Role } from './modules/roles/entity';
-import { Authority } from './modules/auth/entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/guard';
+import { Account } from './modules/account/entity';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
-    RoleModule,
+    AccountModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: '175.24.166.121',
       port: 3306,
       username: 'root',
       password: 'cqx20010118',
-      database: 'test',
-      entities: [User, Role, Authority],
+      database: 'collect',
+      entities: [User, Account],
       synchronize: true,
     }),
   ],

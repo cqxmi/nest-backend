@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity';
 import { FindOneOptions, Repository } from 'typeorm';
-import { jwtPayload } from './user.dto';
+import { searchDto } from './user.dto';
+import { hashPassword } from 'src/utils/bcrypt';
+import { Account } from '../account/entity';
 
 @Injectable()
 export class UsersService {
@@ -11,21 +13,39 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  findOne(user: jwtPayload, relations?: Array<string>): Promise<User | null> {
+  findOneByUsername(username: string): Promise<User | null> {
     const params: FindOneOptions<User> = {};
-    const where: jwtPayload = {};
+    const where: searchDto = {};
 
-    // 构建查询条件：支持 phone 或 id
-    if (user.phone) {
-      where.phone = user.phone;
-    }
-    if (user.id) {
-      where.id = user.id;
-    }
+    where.username = username;
     params.where = where;
-    if (relations) {
-      params.relations = relations;
-    }
     return this.usersRepository.findOne(params);
+  }
+
+  async changePass(newPassword: string): Promise<boolean> {
+    // 1. 查找 root 用户
+    const user = await this.findOneByUsername('root');
+    if (!user) {
+      return false; // 用户不存在
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    // 3. 更新数据库
+    user.password = hashedPassword;
+    await this.usersRepository.save(user);
+
+    return true; // 成功
+  }
+
+  async getAccounts(username: string): Promise<Account[]> {
+    const user = await this.usersRepository.findOne({
+      where: { username },
+      relations: ['accounts'],
+    });
+
+    if (!user) throw new NotFoundException('用户不存在');
+
+    return user.accounts;
   }
 }

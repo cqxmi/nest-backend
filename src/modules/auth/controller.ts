@@ -1,17 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
-import { CreateUserDto } from '../users/user.dto';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './service';
-import { buildTree } from '../../utils/funcs';
-import { Authority } from './entity';
 import { ResponseBooleanDto } from 'src/app.dto';
+import { searchDto } from '../users/user.dto';
 
 @ApiTags('鉴权') // Swagger 分组名称
 @Controller('auth')
@@ -22,23 +13,14 @@ export class AuthController {
   @ApiOperation({ summary: '登录', description: '用户登录' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '添加角色成功',
-    type: [ResponseBooleanDto],
+    description: '登录成功',
+    type: ResponseBooleanDto,
   })
   @HttpCode(HttpStatus.OK)
-  async signIn(@Body() signInDto: CreateUserDto) {
+  async signIn(@Body() body: searchDto) {
+    const password = body.password as string;
     return {
-      data: await this.authService.signIn(signInDto.phone, signInDto.password),
-    };
-  }
-
-  @ApiOperation({ summary: '获取所有的权限', description: '获取所有权限' })
-  @HttpCode(HttpStatus.OK)
-  @Get('getPermissions')
-  async getPermissions(): Promise<any> {
-    const auths: Array<Authority> = await this.authService.findAll();
-    return {
-      data: buildTree(auths),
+      data: await this.authService.signIn(password),
     };
   }
 }

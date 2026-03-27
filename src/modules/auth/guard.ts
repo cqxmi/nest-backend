@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // ✅ 白名单：放行登录、注册等公共接口
-    const publicRoutes = ['/auth/login'];
+    const publicRoutes = ['/auth/login', '/users/changePass'];
 
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);

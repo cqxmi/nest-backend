@@ -1,42 +1,52 @@
 import {
+  Body,
   Controller,
-  Post,
-  Req,
   Get,
-  HttpStatus,
   HttpCode,
+  HttpStatus,
+  Post,
+  Request,
 } from '@nestjs/common';
 import { UsersService } from './service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { jwtPayload } from './user.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ResponseAccountDto, ResponseBooleanDto } from 'src/app.dto';
+import { searchDto } from './user.dto';
+import { AuthRequest } from '../auth/auth.dto';
 
 @ApiTags('用户') // Swagger 分组名称
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Post('vifLoginStatus')
-  @ApiOperation({ summary: '获取登录信息', description: '拿用户信息' })
+  @Post('changePass')
+  @ApiOperation({ summary: '修改密码', description: '修改密码' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '修改成功',
+    type: ResponseBooleanDto,
+  })
   @HttpCode(HttpStatus.OK)
-  async vifLoginStatus(@Req() request: Request) {
-    const user: jwtPayload = request['user'] as jwtPayload;
-    const res = await this.userService.findOne({ id: user.id }, ['role']);
+  async changePassword(@Body() body: searchDto) {
+    const password = body.password as string;
     return {
-      data: {
-        role: res?.role.name,
-        username: res?.name,
-      },
+      success: await this.userService.changePass(password),
     };
   }
 
-  @Get('getPermissionListByUser')
-  @ApiOperation({ summary: '获取角色对应的权限', description: '获取权限' })
+  @Get('getAccounts')
+  @ApiOperation({
+    summary: '获取所有账号',
+    description: '获取当前用户下所有的账号信息',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '操作成功',
+    type: ResponseAccountDto,
+  })
   @HttpCode(HttpStatus.OK)
-  async getPermissionListByUser(@Req() request: Request) {
-    const user: jwtPayload = request['user'] as jwtPayload;
-    const res = await this.userService.findOne({ id: user.id }, ['role']);
+  async getAccounts(@Request() req: AuthRequest) {
     return {
-      data: res?.role.authoritys,
+      data: await this.userService.getAccounts(req.user.username),
     };
   }
 }
