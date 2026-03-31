@@ -21,3 +21,11 @@ export class ResponseAccountDto extends ResponseDto {
   })
   data: Account[];
 }
+
+export class ResponseChatDto extends ResponseDto {
+  @ApiProperty({
+    description: 'AI回答',
+    example: '我可以做的事情有...',
+  })
+  data: string;
+}
