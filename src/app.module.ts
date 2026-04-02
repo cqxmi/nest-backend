@@ -20,6 +20,7 @@ import { ChatModule } from './modules/chat/module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/module';
 import { RedisModule } from './redis/module';
+import { MailModule } from './modules/email/module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RedisModule } from './redis/module';
     ChatModule,
     DatabaseModule,
     RedisModule,
+    MailModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

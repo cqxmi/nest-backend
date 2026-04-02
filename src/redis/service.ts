@@ -28,6 +28,10 @@ export class RedisService {
     return this.client.rpush(key, ...values);
   }
 
+  lpush(key: string, ...values: string[]): Promise<number> {
+    return this.client.lpush(key, ...values);
+  }
+
   lrange(key: string, start = 0, end = -1): Promise<string[]> {
     return this.client.lrange(key, start, end);
   }
