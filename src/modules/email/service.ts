@@ -21,7 +21,7 @@ export class MailService {
     });
   }
 
-  async sendMail(html: string): Promise<boolean> {
+  async sendMail({ html }): Promise<string> {
     const info = await this.transporter.sendMail({
       from: `Jarvis <${process.env.EMAIL_USER}>,`,
       to: process.env.EMAIL_USER,
@@ -30,9 +30,9 @@ export class MailService {
     });
 
     if (info && info.accepted && info.accepted.length) {
-      return true;
+      return '已成功发送';
     } else {
-      return false;
+      return '发送失败';
     }
   }
 }

@@ -21,12 +21,14 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/module';
 import { RedisModule } from './redis/module';
 import { MailModule } from './modules/email/module';
+// import { AiModule } from './modules/ai/module';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
     AccountModule,
+    // AiModule,
     ChatModule,
     DatabaseModule,
     RedisModule,
