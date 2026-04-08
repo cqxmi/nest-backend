@@ -3,14 +3,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
+import { OnModuleInit } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
+import { chatDto } from './ai.dto';
+import { createAgent, ReactAgent } from 'langchain';
+import { RedisSaver } from '@langchain/langgraph-checkpoint-redis';
 
 @Injectable()
-export class AiService {
-  private model: ChatOpenAI;
+export class AiService implements OnModuleInit {
+  private agent!: ReactAgent;
 
-  constructor() {
-    this.model = new ChatOpenAI({
+  async onModuleInit() {
+    const model = new ChatOpenAI({
       configuration: {
         baseURL: process.env.CHAT_BASE_URL,
       },
@@ -21,25 +25,30 @@ export class AiService {
       timeout: 60000,
       maxRetries: 3,
     });
+
+    // `RedisSaver.fromUrl(...)` 是异步的，必须等待后才能传给 `createAgent({ checkpointer })`
+    const checkpointer = await RedisSaver.fromUrl(
+      process.env.REDIS_URL as string,
+    );
+
+    this.agent = createAgent({
+      model,
+      tools: [],
+      checkpointer,
+    });
   }
 
-  async invoke(text: string) {
-    const result = await this.model.invoke(text);
-    return result.content;
-  }
+  async send(msg: chatDto): Promise<string> {
+    const res = await this.agent.invoke(
+      { messages: [{ role: 'user', content: msg.msg }] },
+      { configurable: { thread_id: msg.company } },
+    );
 
-  async stream(text: string) {
-    return this.model.stream(text);
-  }
-
-  async batch(texts: string) {
-    const inputs = texts.split(',');
-
-    const result = await this.model.batch(inputs);
-
-    return {
-      inputs,
-      outputs: result.map((message) => message.content),
+    const messages = res.messages ?? [];
+    const lastMessage = messages[messages.length - 1] as {
+      content?: string;
     };
+
+    return lastMessage?.content ?? '';
   }
 }
