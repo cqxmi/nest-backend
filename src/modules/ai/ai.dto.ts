@@ -16,3 +16,12 @@ export class chatDto {
   @IsNotEmpty({ message: '消息不能为空' })
   msg: string;
 }
+
+export class searchDto {
+  @ApiProperty({
+    description: '公司名称',
+    example: '腾讯',
+  })
+  @IsNotEmpty({ message: '公司不能为空' })
+  company: string;
+}

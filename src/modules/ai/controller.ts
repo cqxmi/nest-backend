@@ -1,8 +1,16 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AiService } from './service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseChatDto } from 'src/app.dto';
-import { chatDto } from './ai.dto';
+import { chatDto, searchDto } from './ai.dto';
 
 @ApiTags('AI') // Swagger 分组名称
 @Controller('ai')
@@ -20,6 +28,20 @@ export class AiController {
   async sendMsg(@Body() body: chatDto) {
     return {
       data: await this.aiService.send(body),
+    };
+  }
+
+  @Get('getHistory')
+  @ApiOperation({ summary: '拿历史', description: '获取对话历史' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '成功返回消息',
+    type: ResponseChatDto,
+  })
+  @HttpCode(HttpStatus.OK)
+  async getHis(@Query() query: searchDto) {
+    return {
+      data: await this.aiService.getHistory(query.company),
     };
   }
 }
