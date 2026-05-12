@@ -16,10 +16,8 @@ import { LoggingInterceptor } from './interceptor/logging.interceptor';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/guard';
-// import { ChatModule } from './modules/chat/module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/module';
-// import { RedisModule } from './redis/module';
 import { MailModule } from './modules/email/module';
 import { AiModule } from './modules/ai/module';
 
@@ -29,9 +27,7 @@ import { AiModule } from './modules/ai/module';
     AuthModule,
     AccountModule,
     AiModule,
-    // ChatModule,
     DatabaseModule,
-    // RedisModule,
     MailModule,
     ConfigModule.forRoot({
       isGlobal: true,

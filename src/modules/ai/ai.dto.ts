@@ -25,3 +25,10 @@ export class searchDto {
   @IsNotEmpty({ message: '公司不能为空' })
   company: string;
 }
+
+export interface AiResponse {
+  code: number;
+  data: string;
+  success: boolean;
+  message?: string;
+}

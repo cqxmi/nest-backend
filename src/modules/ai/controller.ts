@@ -7,7 +7,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { AiService } from './service';
+import { AiClient } from './client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseChatDto } from 'src/app.dto';
 import { chatDto, searchDto } from './ai.dto';
@@ -15,10 +15,10 @@ import { chatDto, searchDto } from './ai.dto';
 @ApiTags('AI') // Swagger 分组名称
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(private readonly aiClient: AiClient) {}
 
   @Post('sendMessage')
-  @ApiOperation({ summary: '推送消息', description: '推送消息' })
+  @ApiOperation({ summary: 'AI发消息', description: 'AI发消息' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: '成功返回消息',
@@ -26,9 +26,10 @@ export class AiController {
   })
   @HttpCode(HttpStatus.OK)
   async sendMsg(@Body() body: chatDto) {
-    return {
-      data: await this.aiService.send(body),
-    };
+    return await this.aiClient.sendMessage({
+      user_id: body.company,
+      message: body.msg,
+    });
   }
 
   @Get('getHistory')
@@ -41,7 +42,7 @@ export class AiController {
   @HttpCode(HttpStatus.OK)
   async getHis(@Query() query: searchDto) {
     return {
-      data: await this.aiService.getHistory(query.company),
+      data: await this.aiClient.getHistory({ user_id: query.company }),
     };
   }
 }
