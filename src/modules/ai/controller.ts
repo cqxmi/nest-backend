@@ -41,8 +41,6 @@ export class AiController {
   })
   @HttpCode(HttpStatus.OK)
   async getHis(@Query() query: searchDto) {
-    return {
-      data: await this.aiClient.getHistory({ user_id: query.company }),
-    };
+    return await this.aiClient.getHistory({ user_id: query.company });
   }
 }

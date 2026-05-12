@@ -18,7 +18,6 @@ export class AiClient {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       { params },
     );
-
     return res.data;
   }
 }
