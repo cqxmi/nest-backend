@@ -8,16 +8,14 @@ export class Account {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ description: '用户昵称', example: '张三' })
-  @Column()
-  name: string;
-
   @ApiProperty({ description: '平台', example: 'dy' })
   @Column()
   platform: string;
 
-  @ApiProperty({ description: 'cookie', example: '123456' })
-  @Column()
+  @ApiProperty({ description: 'cookie的JSON字符串', example: '123456' })
+  @Column({
+    type: 'longtext',
+  })
   cookie: string;
 
   @ManyToOne(() => User, (user) => user.accounts)
