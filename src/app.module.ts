@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/users/module';
 import { AuthModule } from './modules/auth/module';
 import { AccountModule } from './modules/account/module';
+import { ProblemModule } from './modules/problem/module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { DataSource } from 'typeorm';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -26,6 +27,7 @@ import { AiModule } from './modules/ai/module';
     UserModule,
     AuthModule,
     AccountModule,
+    ProblemModule,
     AiModule,
     DatabaseModule,
     MailModule,
