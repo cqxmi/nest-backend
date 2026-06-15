@@ -1,5 +1,3 @@
-import { User } from '../modules/users/entity';
-import { Account } from '../modules/account/entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -17,7 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           username: config.get('USER_NAME'),
           password: config.get('PASSWORD'),
           database: config.get('DATA_BASE'),
-          entities: [User, Account],
+          autoLoadEntities: true,
           synchronize: true,
         };
       },

@@ -10,37 +10,24 @@ import {
 import { ProblemService } from './service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseBooleanDto } from 'src/app.dto';
-import { ProblemAddDto, ProblemUpdateDto, DeleteProblemDto, ProblemFindByTypeDto, ProblemGetByIdDto } from './dto';
+import { ProblemSaveDto, DeleteProblemDto, ProblemFindByTypeDto, ProblemGetByIdDto, ProblemAnswerDto } from './dto';
 
 @ApiTags('问题')
 @Controller('prob')
 export class ProblemController {
   constructor(private readonly problemService: ProblemService) { }
 
-  @Post('add')
-  @ApiOperation({ summary: '增加问题', description: '增加问题' })
+  @Post('save')
+  @ApiOperation({ summary: '新增/编辑问题', description: '传 ID 为编辑，不传 ID 为新增' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: '添加成功',
+    description: '操作成功',
     type: ResponseBooleanDto,
   })
   @HttpCode(HttpStatus.OK)
-  async addProblem(@Body() body: ProblemAddDto) {
-    await this.problemService.add(body);
-    return { message: '添加成功' };
-  }
-
-  @Post('update')
-  @ApiOperation({ summary: '更新问题', description: '更新问题' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: '更新成功',
-    type: ResponseBooleanDto,
-  })
-  @HttpCode(HttpStatus.OK)
-  async updateProblem(@Body() body: ProblemUpdateDto) {
-    await this.problemService.update(body);
-    return { message: '更新成功' };
+  async saveProblem(@Body() body: ProblemSaveDto) {
+    await this.problemService.save(body);
+    return { message: '操作成功' };
   }
 
   @Get('del')
@@ -64,14 +51,11 @@ export class ProblemController {
   })
   @HttpCode(HttpStatus.OK)
   async findByType(@Query() query: ProblemFindByTypeDto) {
-    const result = await this.problemService.findByType(query.type, query.page, query.size);
+    const result = await this.problemService.findByType(query.type, query.keyword, Number(query.page), Number(query.size), Number(query.isQuestion));
     return {
       message: '查询成功',
       data: result.data,
       total: result.total,
-      page: result.page,
-      size: result.size,
-      totalPages: result.totalPages,
     };
   }
 
@@ -83,10 +67,22 @@ export class ProblemController {
   })
   @HttpCode(HttpStatus.OK)
   async getById(@Query() query: ProblemGetByIdDto) {
-    const problem = await this.problemService.getById(query.id);
+    const problem = await this.problemService.getById(Number(query.id));
     return {
       message: '查询成功',
       data: problem,
     };
+  }
+
+  @Post('answer')
+  @ApiOperation({ summary: '记录答题结果', description: '传 id 和 correct（1 正确 / 2 错误），对应次数加 1' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '记录成功',
+  })
+  @HttpCode(HttpStatus.OK)
+  async recordAnswer(@Body() body: ProblemAnswerDto) {
+    await this.problemService.recordAnswer(body);
+    return { message: '记录成功' };
   }
 }

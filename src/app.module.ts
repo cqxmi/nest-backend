@@ -21,6 +21,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/module';
 import { MailModule } from './modules/email/module';
 import { AiModule } from './modules/ai/module';
+import { ProblemTypeModule } from './modules/type/module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AiModule } from './modules/ai/module';
     AuthModule,
     AccountModule,
     ProblemModule,
+    ProblemTypeModule,
     AiModule,
     DatabaseModule,
     MailModule,
