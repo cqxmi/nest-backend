@@ -102,6 +102,11 @@ export class ProblemService {
     return problem;
   }
 
+  async batchSave(problems: ProblemSaveDto[]) {
+    const entities = problems.map((p) => this.problemsRepository.create(p));
+    return this.problemsRepository.save(entities);
+  }
+
   async recordAnswer(body: ProblemAnswerDto) {
     const problem = await this.problemsRepository.findOne({
       where: { id: body.id },

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional, IsArray, ArrayMinSize, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class ProblemSaveDto {
   @ApiProperty({ description: '问题 ID（编辑时必传，新增不传）', example: 1, required: false })
@@ -21,6 +22,15 @@ export class ProblemSaveDto {
   @IsString({ message: '类型必须为字符串' })
   @IsNotEmpty({ message: '类型不能为空' })
   type: string;
+}
+
+export class ProblemBatchSaveDto {
+  @ApiProperty({ description: '问题列表', type: [ProblemSaveDto] })
+  @IsArray({ message: 'problems 必须为数组' })
+  @ArrayMinSize(1, { message: 'problems 至少包含一条数据' })
+  @ValidateNested({ each: true })
+  @Type(() => ProblemSaveDto)
+  problems!: ProblemSaveDto[];
 }
 
 export class DeleteProblemDto {

@@ -10,7 +10,7 @@ import {
 import { ProblemService } from './service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseBooleanDto } from 'src/app.dto';
-import { ProblemSaveDto, DeleteProblemDto, ProblemFindByTypeDto, ProblemGetByIdDto, ProblemAnswerDto } from './dto';
+import { ProblemSaveDto, ProblemBatchSaveDto, DeleteProblemDto, ProblemFindByTypeDto, ProblemGetByIdDto, ProblemAnswerDto } from './dto';
 
 @ApiTags('问题')
 @Controller('prob')
@@ -28,6 +28,19 @@ export class ProblemController {
   async saveProblem(@Body() body: ProblemSaveDto) {
     await this.problemService.save(body);
     return { message: '操作成功' };
+  }
+
+  @Post('batchSave')
+  @ApiOperation({ summary: '批量新增问题', description: '批量新增问题，不支持编辑（不传 ID）' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '操作成功',
+    type: ResponseBooleanDto,
+  })
+  @HttpCode(HttpStatus.OK)
+  async batchSaveProblem(@Body() body: ProblemBatchSaveDto) {
+    const result = await this.problemService.batchSave(body.problems);
+    return { message: '操作成功', data: result };
   }
 
   @Get('del')
